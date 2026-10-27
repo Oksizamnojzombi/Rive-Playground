@@ -54,6 +54,7 @@ const LESSONS = [
   ["canvas14", "14.Lesson_14/Final_Result/14.mds_lesson14_balance.riv", "DoubleBalance"],
   ["canvas15", "15.Lesson_15/Final_Result/15.mds_lesson15_followbat.riv", "FollowingBat"],
   ["canvas16", "16.Lesson_16/Final_Result/16.mds_lesson16_text.riv", "InteractText", "text Remap"],
+  ["canvas17", "17.Lesson_17/Final_Result/17.mds_lesson17_walkcontrol.riv", "Walk", "walk - remap"],
   ["canvasLogo", "AVQ_logo/avq_interactivelogo.riv", "Interactive_logo"],
 ];
 
