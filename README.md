@@ -24,6 +24,8 @@ course by Maksym Marakhovskyi / Motion Design School.
 | 14 | Double Balance | Complex balance rig, seamless cyclical animation transitions |
 | 15 | Follow Bat | Advanced shape techniques, cursor-follow & gaze-listener setup |
 | 16 | Interactive Text | Text in Rive, text-based setups, custom rigs |
+| 17 | Walk Control | Seamless walk-cycle animation, slider-driven rigging |
+| 18 | Outline Morphings | 3D object rig, shape-morphing transformations |
 | Bonus | Main Menu (hero) | Radial menu, nested artboards, click navigation |
 
 > Lesson 09 (Inner Space) is temporarily commented out in `index.html` while
