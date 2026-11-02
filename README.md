@@ -26,6 +26,7 @@ course by Maksym Marakhovskyi / Motion Design School.
 | 16 | Interactive Text | Text in Rive, text-based setups, custom rigs |
 | 17 | Walk Control | Seamless walk-cycle animation, slider-driven rigging |
 | 18 | Outline Morphings | 3D object rig, shape-morphing transformations |
+| 19 | Mushroom Control | Custom 3D rig, advanced rigging & compositing |
 | Bonus | Main Menu (hero) | Radial menu, nested artboards, click navigation |
 
 > Lesson 09 (Inner Space) is temporarily commented out in `index.html` while

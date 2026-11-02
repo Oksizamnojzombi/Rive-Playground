@@ -56,6 +56,7 @@ const LESSONS = [
   ["canvas16", "16.Lesson_16/Final_Result/16.mds_lesson16_text.riv", "InteractText", "text Remap"],
   ["canvas17", "17.Lesson_17/Final_Result/17.mds_lesson17_walkcontrol.riv", "Walk", "walk - remap"],
   ["canvas18", "18.Lesson_18/Final_Result/18.mds_lesson18_outlinemorphing.riv", "Morphing"],
+  ["canvas19", "19.Lesson_19/Final_Result/19.mds_lesson19_mushroom.riv", "Mushroom", "mush remap"],
   ["canvasLogo", "AVQ_logo/avq_interactivelogo.riv", "Interactive_logo"],
 ];
 
