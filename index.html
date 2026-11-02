@@ -4,6 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Rive Playground</title>
+    <meta name="description" content="Interactive Rive animations by motion designer Oksana Chernenko: course lessons from Motion Design School and commercial shots." />
+
+    <!-- social link previews (LinkedIn, Facebook, Telegram, Slack, X…) — og:image must be an absolute URL -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Rive Playground" />
+    <meta property="og:title" content="Rive Playground — Oksana Chernenko" />
+    <meta property="og:description" content="Interactive Rive animations by motion designer Oksana Chernenko: course lessons from Motion Design School and commercial shots." />
+    <meta property="og:url" content="https://oksizamnojzombi.github.io/Rive-Playground/" />
+    <meta property="og:image" content="https://oksizamnojzombi.github.io/Rive-Playground/IMG/Banner.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="714" />
+    <meta property="og:image:alt" content="Rive Playground hero: animated characters around concentric teal rings" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Rive Playground — Oksana Chernenko" />
+    <meta name="twitter:description" content="Interactive Rive animations by motion designer Oksana Chernenko: course lessons from Motion Design School and commercial shots." />
+    <meta name="twitter:image" content="https://oksizamnojzombi.github.io/Rive-Playground/IMG/Banner.jpg" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -16,6 +32,7 @@
     <!-- ===================== HERO (2000x1000 interactive menu) ===================== -->
     <header class="hero">
       <a class="hero-logo" href="#lessons"><span class="dot"></span>Rive Playground</a>
+      <a class="hero-author" href="https://www.linkedin.com/in/oksana-chernenko-motion" target="_blank" rel="noopener noreferrer">Oksana Chernenko <span aria-hidden="true">↗</span></a>
 
       <div class="hero-stage">
         <canvas id="heroCanvas" width="2000" height="1000"></canvas>
@@ -29,6 +46,11 @@
 
     <!-- ===================== REAL WORK (production pieces beyond the course) ===================== -->
     <section class="showcase" id="real-work">
+      <p class="page-intro reveal">
+        A playground of interactive Rive animations — commercial work and course practice.
+        Everything here reacts: hover, click, drag and play with the sliders.
+      </p>
+
       <div class="showcase-head reveal">
         <h2>Commercial Shots</h2>
       </div>
@@ -53,7 +75,7 @@
     <!-- ===================== LESSONS GALLERY ===================== -->
     <main class="lessons" id="lessons">
       <div class="lessons-head reveal">
-        <h2>Lessons from Motiondesign School</h2>
+        <h2>Lessons from Motion Design School</h2>
        <!-- <p class="sub">Interactive Rive animations — hover a card to read more</p> -->
       </div>
 
@@ -465,6 +487,7 @@
           Email
         </a>
       </nav>
+      <p class="footer-sign">Oksana Chernenko · Motion Designer · 2026</p>
     </footer>
 
     <script src="https://unpkg.com/@rive-app/webgl2@2.36.0"></script>

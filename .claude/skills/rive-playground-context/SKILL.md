@@ -207,6 +207,15 @@ The canvas is 1200×600 (2:1) to match the logo file's own shape — if a
 different-shaped logo ever replaces it, update `.showcase-canvas`'s
 `aspect-ratio` in CSS to match.
 
+## Social preview (Open Graph)
+
+`<head>` has `description`, `og:*` and `twitter:*` tags. `og:image` /
+`twitter:image` point to `IMG/Banner.jpg` (1200×714, ~130 KB, made from the `Banner.png` source) by **absolute** URL on the
+Pages domain — crawlers ignore relative paths. If the repo/Pages URL changes
+again, update `og:url` and both image URLs. Crawlers cache aggressively: after
+changing the image, re-scrape via LinkedIn Post Inspector / Facebook Sharing
+Debugger.
+
 ## Local preview & the caching trap
 
 Static site, needs an HTTP server (not `file://`) because `fetch()`-ing `.riv`
@@ -229,8 +238,9 @@ fetch('/JS/rive.js', {cache: 'reload'}).then(() => location.reload());
 (Cmd+Shift+R, or clear-cache-and-reload in Safari) when she's testing changes
 in her own browser and something looks stale.
 
-Deployed via GitHub Pages from `github.com/Oksizamnojzombi/MDS_Rive_Lessons`
-(branch `main`) at `oksizamnojzombi.github.io/MDS_Rive_Lessons/` — same caching
+Deployed via GitHub Pages from `github.com/Oksizamnojzombi/Rive-Playground`
+(renamed from `MDS_Rive_Lessons`, which still redirects; branch `main`) at
+`oksizamnojzombi.github.io/Rive-Playground/` — same caching
 caveat applies there even more since it's a real CDN.
 
 ## If testing via Claude's own Browser-pane tool

@@ -138,6 +138,27 @@ body {
   box-shadow: 0 0 14px color-mix(in srgb, var(--teal) 70%, transparent);
 }
 
+/* author link, mirrors the wordmark in the top-right corner */
+.hero-author {
+  position: absolute;
+  top: clamp(18px, 3vw, 30px);
+  right: clamp(18px, 4vw, 36px);
+  z-index: 3;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.7);
+  transition: color var(--dur-link) var(--ease);
+}
+
+.hero-author:hover,
+.hero-author:focus-visible {
+  color: var(--text);
+}
+
 .hero-scroll {
   position: absolute;
   bottom: clamp(16px, 3vw, 26px);
@@ -182,6 +203,15 @@ body {
 
 .showcase-item + .showcase-item {
   margin-top: clamp(14px, 1.6vw, 22px);
+}
+
+.page-intro {
+  margin: 0 0 clamp(48px, 7vw, 96px);
+  font-size: clamp(17px, 1.7vw, 22px);
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  color: var(--muted);
 }
 
 .showcase-head {
@@ -639,6 +669,14 @@ body {
 
 .footer-icon svg { width: 100%; height: 100%; }
 
+.footer-sign {
+  margin: 28px 0 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--faint);
+  letter-spacing: 0.01em;
+}
+
 .footer-link:hover .footer-icon {
   transform: translateY(-1px);
   opacity: 1;
@@ -671,6 +709,18 @@ body {
   .hero-logo .dot {
     width: 7px;
     height: 7px;
+  }
+  .hero-author {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+  }
+}
+
+/* narrow phones: wordmark + author no longer fit beside the top character —
+   push the composition down so the two labels sit on their own strip */
+@media (orientation: portrait) and (max-width: 600px) {
+  .hero {
+    padding-top: 44px;
   }
 }
 
