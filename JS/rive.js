@@ -4,9 +4,14 @@
 //
 //  Картки уроків монтуються ліниво (лише коли картка наближається
 //  до viewport), а не всі одразу при завантаженні сторінки — з усіма
-//  уроками одночасно це 14+ WebGL2-контекстів, і Chrome починає губити
+//  уроками одночасно це 20+ WebGL2-контекстів, і Chrome починає губити
 //  найстаріші (GL_OUT_OF_MEMORY / CONTEXT_LOST_WEBGL), тому картки
 //  зникають хаотично саме в Chrome.
+//
+//  Картка поза екраном ставиться на паузу і знову запускається, коли
+//  до неї повертаються (стан взаємодії зберігається). Пауза не звільняє
+//  WebGL-контекст, тому як запобіжник: якщо живих карток більше за
+//  MAX_LIVE, найдальша з тих, що на паузі, вивантажується повністю.
 // ============================================================
 
 const HERO_SRC = "09.BonusLesson/Final_Result/09.mds_bonuslesson2.riv";
@@ -21,7 +26,7 @@ export const instances = [];
 
 function mount(canvasId, src, stateMachine, artboard) {
   const canvas = document.getElementById(canvasId);
-  if (!canvas) return;
+  if (!canvas) return null;
   const inst = new rive.Rive({
     src,
     canvas,
@@ -32,9 +37,28 @@ function mount(canvasId, src, stateMachine, artboard) {
     onLoad: () => inst.resizeDrawingSurfaceToCanvas(),
   });
   instances.push(inst);
+  return inst;
 }
 
-mount("heroCanvas", HERO_SRC, HERO_STATE_MACHINE);
+// Free the instance AND its WebGL2 context. The old canvas is swapped for a
+// fresh clone, since a canvas whose context was lost can't host a new one.
+function unmount(inst) {
+  const canvas = inst.canvas;
+  inst.cleanup();
+  instances.splice(instances.indexOf(inst), 1);
+  const gl = canvas.getContext("webgl2");
+  if (gl) gl.getExtension("WEBGL_lose_context")?.loseContext();
+  canvas.replaceWith(canvas.cloneNode(false));
+}
+
+const hero = mount("heroCanvas", HERO_SRC, HERO_STATE_MACHINE);
+
+// Hero stays mounted (it's the first thing you see) — just pause it off-screen
+if (hero) {
+  new IntersectionObserver(([entry]) => {
+    entry.isIntersecting ? hero.play() : hero.pause();
+  }).observe(hero.canvas);
+}
 
 // ---- lesson cards + "Real Work" logo: [canvasId, src, stateMachine, artboard?] ----
 const LESSONS = [
@@ -60,21 +84,54 @@ const LESSONS = [
   ["canvasLogo", "AVQ_logo/avq_interactivelogo.riv", "Interactive_logo"],
 ];
 
-const lessonData = new Map();
-const lazyMount = new IntersectionObserver(
+// Observed element = the canvas's parent (the canvas itself gets swapped
+// out on unmount). Card near the viewport → mount / play; scrolled off →
+// pause. Only once more than MAX_LIVE cards are alive → unmount (paused
+// ones only, farthest first).
+const MAX_LIVE = 13; // + the hero; Chrome starts dropping contexts at ~16
+const lessonData = new Map(); // wrapper → lesson tuple
+const live = new Map(); // wrapper → Rive instance
+const onScreen = new Set(); // wrappers inside the play zone
+
+function drop(wrapper) {
+  unmount(live.get(wrapper));
+  live.delete(wrapper);
+}
+
+function enforceLimit() {
+  const paused = [...live.keys()].filter((w) => !onScreen.has(w));
+  const mid = window.innerHeight / 2;
+  const dist = (w) => {
+    const r = w.getBoundingClientRect();
+    return Math.abs(r.top + r.height / 2 - mid);
+  };
+  paused.sort((a, b) => dist(b) - dist(a));
+  while (live.size > MAX_LIVE && paused.length) drop(paused.shift());
+}
+
+const nearby = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      mount(...lessonData.get(entry.target));
-      lazyMount.unobserve(entry.target);
+      const w = entry.target;
+      const inst = live.get(w);
+      if (entry.isIntersecting) {
+        onScreen.add(w);
+        if (inst) inst.play();
+        else live.set(w, mount(...lessonData.get(w)));
+      } else {
+        onScreen.delete(w);
+        if (inst) inst.pause();
+      }
     });
+    enforceLimit();
   },
-  { rootMargin: "400px 0px" } // start loading a bit before the card actually scrolls into view
+  { rootMargin: "300px 0px" } // start loading a bit before the card actually scrolls into view
 );
 
 LESSONS.forEach((lesson) => {
   const canvas = document.getElementById(lesson[0]);
   if (!canvas) return; // card temporarily removed/commented out in HTML
-  lessonData.set(canvas, lesson);
-  lazyMount.observe(canvas);
+  const wrapper = canvas.parentElement;
+  lessonData.set(wrapper, lesson);
+  nearby.observe(wrapper);
 });

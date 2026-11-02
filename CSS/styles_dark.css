@@ -48,20 +48,34 @@ body {
   overflow-x: hidden;
 }
 
-/* Faint dissolved gradient orbs across the whole site background.
-   Fixed = they stay put as the page scrolls. Tweak the alpha values
-   (last number in each rgba) to make them more / less visible. */
-body::before {
-  content: "";
+/* Dissolved gradient orbs across the whole site background.
+   A fixed layer taller than the viewport that JS/masonry.js slides up
+   slower than the page scrolls (parallax), so the glow drifts with the
+   content and feels like it sits deeper. Orbs are spread down the layer's
+   full height. Tweak the percentages (rgba alpha in the fallback) to make
+   them more / less visible; parallax speed is BG_DEPTH in JS/masonry.js. */
+.bg-orbs {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: calc(100vh + var(--bg-travel, 0px));
   z-index: -1;
   pointer-events: none;
+  will-change: transform;
+  /* fallback for browsers without color-mix() */
   background:
-    radial-gradient(42vw 42vw at 14% 16%, color-mix(in srgb, var(--teal) 7%, transparent), transparent 60%),
-    radial-gradient(38vw 38vw at 86% 20%, color-mix(in srgb, var(--blue) 6%, transparent), transparent 60%),
-    radial-gradient(46vw 46vw at 80% 84%, color-mix(in srgb, var(--lime) 5%, transparent), transparent 62%),
-    radial-gradient(40vw 40vw at 18% 88%, color-mix(in srgb, var(--orange) 4.5%, transparent), transparent 60%);
+    radial-gradient(48vw 48vw at 14% 6%, rgba(0, 190, 205, 0.2), transparent 62%),
+    radial-gradient(42vw 42vw at 88% 14%, rgba(0, 147, 186, 0.18), transparent 62%),
+    radial-gradient(46vw 46vw at 12% 44%, rgba(0, 147, 186, 0.16), transparent 62%),
+    radial-gradient(46vw 46vw at 86% 58%, rgba(0, 190, 205, 0.18), transparent 62%),
+    radial-gradient(48vw 48vw at 80% 86%, rgba(0, 147, 186, 0.18), transparent 62%);
+  background:
+    radial-gradient(48vw 48vw at 14% 6%, color-mix(in srgb, var(--teal) 20%, transparent), transparent 62%),
+    radial-gradient(42vw 42vw at 88% 14%, color-mix(in srgb, var(--blue) 18%, transparent), transparent 62%),
+    radial-gradient(46vw 46vw at 12% 44%, color-mix(in srgb, var(--blue) 16%, transparent), transparent 62%),
+    radial-gradient(46vw 46vw at 86% 58%, color-mix(in srgb, var(--teal) 18%, transparent), transparent 62%),
+    radial-gradient(48vw 48vw at 80% 86%, color-mix(in srgb, var(--blue) 18%, transparent), transparent 62%);
 }
 
 /* ============================================================
@@ -124,6 +138,27 @@ body::before {
   box-shadow: 0 0 14px color-mix(in srgb, var(--teal) 70%, transparent);
 }
 
+/* author link, mirrors the wordmark in the top-right corner */
+.hero-author {
+  position: absolute;
+  top: clamp(18px, 3vw, 30px);
+  right: clamp(18px, 4vw, 36px);
+  z-index: 3;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.7);
+  transition: color var(--dur-link) var(--ease);
+}
+
+.hero-author:hover,
+.hero-author:focus-visible {
+  color: var(--text);
+}
+
 .hero-scroll {
   position: absolute;
   bottom: clamp(16px, 3vw, 26px);
@@ -164,6 +199,19 @@ body::before {
   max-width: 1320px;
   margin: 0 auto;
   padding: clamp(24px, 4vw, 48px) clamp(16px, 5vw, 64px) 0;
+}
+
+.showcase-item + .showcase-item {
+  margin-top: clamp(14px, 1.6vw, 22px);
+}
+
+.page-intro {
+  margin: 0 0 clamp(48px, 7vw, 96px);
+  font-size: clamp(17px, 1.7vw, 22px);
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  color: var(--muted);
 }
 
 .showcase-head {
@@ -499,6 +547,63 @@ body::before {
   .hero-scroll .chev { animation: none; }
 }
 
+/* ---------- "Load more" (lessons gallery + Commercial Shots) ---------- */
+
+/* items past the current batch (JS/masonry.js) — display:none keeps them
+   out of the masonry, the card counter and the Rive lazy-mount */
+.lesson-card.is-collapsed,
+.showcase-item.is-collapsed {
+  display: none;
+}
+
+.load-more-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(28px, 4vw, 48px);
+}
+
+.load-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 50px;
+  padding: 0 28px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition:
+    transform var(--dur-link) var(--ease),
+    border-color var(--dur-link) var(--ease),
+    box-shadow var(--dur-link) var(--ease);
+}
+
+.load-more[hidden] {
+  display: none;
+}
+
+.load-more .count {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.load-more:hover {
+  transform: translateY(-2px);
+  border-color: var(--teal); /* fallback */
+  border-color: color-mix(in srgb, var(--teal) 55%, transparent);
+  box-shadow: 0 0 28px color-mix(in srgb, var(--teal) 18%, transparent);
+}
+
+.load-more:focus-visible {
+  outline: none;
+  border-color: var(--teal);
+}
+
 /* ============================================================
    FOOTER
    ============================================================ */
@@ -542,14 +647,16 @@ body::before {
 
 .footer-link:hover {
   transform: translateY(-2px);
-  border-color: color-mix(in srgb, var(--teal) 55%, transparent);
+  border-color: var(--accent); /* fallback */
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
   color: #fff;
-  box-shadow: 0 0 28px color-mix(in srgb, var(--teal) 18%, transparent);
+  box-shadow: 0 0 28px color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
 .footer-link:focus-visible {
   outline: none;
-  border-color: color-mix(in srgb, var(--teal) 70%, transparent);
+  border-color: var(--accent); /* fallback */
+  border-color: color-mix(in srgb, var(--accent) 70%, transparent);
 }
 
 .footer-icon {
@@ -557,14 +664,23 @@ body::before {
   width: 18px;
   height: 18px;
   opacity: 0.9;
-  transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
+  transition: transform 0.3s var(--ease), opacity 0.3s var(--ease), color 0.3s var(--ease);
 }
 
 .footer-icon svg { width: 100%; height: 100%; }
 
+.footer-sign {
+  margin: 28px 0 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--faint);
+  letter-spacing: 0.01em;
+}
+
 .footer-link:hover .footer-icon {
   transform: translateY(-1px);
   opacity: 1;
+  color: var(--accent);
 }
 
 /* ============================================================
@@ -593,6 +709,18 @@ body::before {
   .hero-logo .dot {
     width: 7px;
     height: 7px;
+  }
+  .hero-author {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+  }
+}
+
+/* narrow phones: wordmark + author no longer fit beside the top character —
+   push the composition down so the two labels sit on their own strip */
+@media (orientation: portrait) and (max-width: 600px) {
+  .hero {
+    padding-top: 44px;
   }
 }
 
