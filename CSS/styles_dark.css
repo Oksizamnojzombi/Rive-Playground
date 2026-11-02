@@ -180,6 +180,10 @@ body {
   padding: clamp(24px, 4vw, 48px) clamp(16px, 5vw, 64px) 0;
 }
 
+.showcase-item + .showcase-item {
+  margin-top: clamp(14px, 1.6vw, 22px);
+}
+
 .showcase-head {
   margin-bottom: clamp(20px, 3vw, 32px);
 }
@@ -511,6 +515,63 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; transition: none; }
   .hero-scroll .chev { animation: none; }
+}
+
+/* ---------- "Load more" (lessons gallery + Commercial Shots) ---------- */
+
+/* items past the current batch (JS/masonry.js) — display:none keeps them
+   out of the masonry, the card counter and the Rive lazy-mount */
+.lesson-card.is-collapsed,
+.showcase-item.is-collapsed {
+  display: none;
+}
+
+.load-more-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(28px, 4vw, 48px);
+}
+
+.load-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 50px;
+  padding: 0 28px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition:
+    transform var(--dur-link) var(--ease),
+    border-color var(--dur-link) var(--ease),
+    box-shadow var(--dur-link) var(--ease);
+}
+
+.load-more[hidden] {
+  display: none;
+}
+
+.load-more .count {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.load-more:hover {
+  transform: translateY(-2px);
+  border-color: var(--teal); /* fallback */
+  border-color: color-mix(in srgb, var(--teal) 55%, transparent);
+  box-shadow: 0 0 28px color-mix(in srgb, var(--teal) 18%, transparent);
+}
+
+.load-more:focus-visible {
+  outline: none;
+  border-color: var(--teal);
 }
 
 /* ============================================================

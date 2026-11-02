@@ -86,19 +86,36 @@ That prints every artboard in the file with its state machines and animations.
 Find the one that has the state machine you actually want, then pass its name
 as the 4th argument — or leave it off if the default artboard is already correct.
 
-## Lazy-mounting (don't mount everything eagerly)
+## Lazy-mounting + unmounting (don't keep everything alive)
 
 `JS/rive.js` keeps a `LESSONS` array of `[canvasId, src, stateMachine, artboard?]`
-tuples and mounts each one lazily via `IntersectionObserver` (`rootMargin: "400px
-0px"`), not all at once on page load. This exists because mounting ~19 lesson
-canvases + the hero + the logo simultaneously creates that many live WebGL2
-contexts, and Chrome starts silently killing the oldest ones
-(`GL_OUT_OF_MEMORY`, `CONTEXT_LOST_WEBGL`) once too many are alive — cards go
-blank seemingly at random, only in Chrome (Safari tolerates more). **Add new
-lessons to the `LESSONS` array, not as a separate eager `mount()` call**, unless
-the canvas is guaranteed to be above the fold (that's why the hero and, until
-now, the logo were mounted eagerly before this pattern existed — new additions
-should go through the array).
+tuples. Each canvas's **parent** (`.canvas-inner` / `.showcase-canvas`) is
+watched by one `IntersectionObserver` (`nearby`, `rootMargin: "300px 0px"`):
+entering mounts the card (or `play()`s it if already alive), leaving
+`pause()`s it — Oksana wants paused cards to resume with their interaction
+state intact, so there's **no distance-based unmount** (one existed briefly
+and was removed on her request).
+
+Pausing does NOT free the WebGL2 context, so there's a safety cap:
+`MAX_LIVE = 13` live lesson instances (+ the hero = 14). Past it, paused cards
+farthest from the viewport centre are fully unmounted: `inst.cleanup()`,
+`WEBGL_lose_context.loseContext()`, and the `<canvas>` is swapped for a fresh
+`cloneNode(false)` (a lost-context canvas can't host a new Rive instance).
+Those remount from scratch on return (state resets) — in practice the top-most
+cards after scrolling the whole gallery. The hero stays mounted, pausing
+off-screen. Don't raise `MAX_LIVE` above ~14.
+
+Why: every live Rive canvas is its own WebGL2 context, and Chrome starts
+silently killing the oldest ones (`GL_OUT_OF_MEMORY`, `CONTEXT_LOST_WEBGL`)
+at ~16 — cards go blank seemingly at random, only in Chrome (Safari tolerates
+more). Lazy-mount alone only *delays* this: without the cap, scrolling the
+whole gallery once ends with 20+ live contexts. **Add new lessons to
+the `LESSONS` array, never as a separate eager `mount()` call.** Observe the
+wrapper, not the canvas — the canvas element gets replaced on unmount.
+
+To check the live count while testing:
+`(await import('/JS/rive.js')).instances.length` in the console (same module
+instance as the page's).
 
 ## Card sizing: three independent knobs, easy to confuse
 
@@ -140,6 +157,25 @@ fill it in from DOM order —
 
 — so reordering cards in the HTML is enough; nothing else needs updating. If a
 manual number ever needs to override this, just put text inside that span.
+
+## "Load more" (gallery + Commercial Shots)
+
+Each `<button class="load-more" data-items="...">` (one under `.lessons-grid`
+with `data-items=".lesson-card"`, one under the showcase items with
+`data-items=".showcase-item"`) is wired by `setupLoadMore()` in
+`JS/masonry.js`: its section's first `LOAD_BATCH = 8` items (DOM order) show,
+the rest get `.is-collapsed` (`display: none`), and each click reveals the next
+8 (label shows how many are left; the button hides when none are). With 8 items
+or fewer the button simply never appears — that's why Commercial Shots shows no
+button yet (1 item). `display: none` keeps collapsed items out of the masonry,
+the CSS card counter and the Rive lazy-mount — their `.riv` files aren't
+fetched until revealed. Every reveal re-runs `layoutMasonry()`. Without JS all
+items show. HTML order decides what's in the first batch.
+
+To add another Commercial Shot: copy the `<article class="showcase-item">`
+block above that section's `.load-more-wrap`, give its canvas a new id, and
+add the canvas to `LESSONS` in `JS/rive.js`. Stacked items get spacing from
+`.showcase-item + .showcase-item`.
 
 ## Card copy conventions
 

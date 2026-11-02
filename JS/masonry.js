@@ -40,6 +40,40 @@ window.addEventListener("resize", () => {
 });
 
 // ============================================================
+//  "Load more" — each .load-more button (lessons gallery, Commercial
+//  Shots) shows the first LOAD_BATCH items of its section (DOM order,
+//  items = its data-items selector) and reveals the rest batch by batch.
+//  With LOAD_BATCH items or fewer the button just stays hidden.
+//  Collapsed items are display:none, so their Rive files aren't even
+//  fetched until shown.
+// ============================================================
+const LOAD_BATCH = 8;
+
+function setupLoadMore(btn) {
+  const items = [...btn.closest("section, main").querySelectorAll(btn.dataset.items)];
+  const collapsed = () => items.filter((el) => el.classList.contains("is-collapsed"));
+  const update = () => {
+    const left = collapsed().length;
+    btn.hidden = left === 0;
+    btn.innerHTML = `Load more <span class="count">${left}</span>`;
+  };
+
+  items.forEach((el, i) => i >= LOAD_BATCH && el.classList.add("is-collapsed"));
+  update();
+
+  btn.addEventListener("click", () => {
+    collapsed()
+      .slice(0, LOAD_BATCH)
+      .forEach((el) => el.classList.remove("is-collapsed"));
+    layoutMasonry();
+    update();
+  });
+}
+
+document.querySelectorAll(".load-more[data-items]").forEach(setupLoadMore);
+layoutMasonry();
+
+// ============================================================
 //  Background orbs parallax — the .bg-orbs layer is taller than the
 //  viewport and slides up at BG_DEPTH × the page's scroll speed
 // ============================================================
