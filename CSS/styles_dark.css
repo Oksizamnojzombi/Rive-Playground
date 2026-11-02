@@ -48,20 +48,34 @@ body {
   overflow-x: hidden;
 }
 
-/* Faint dissolved gradient orbs across the whole site background.
-   Fixed = they stay put as the page scrolls. Tweak the alpha values
-   (last number in each rgba) to make them more / less visible. */
-body::before {
-  content: "";
+/* Dissolved gradient orbs across the whole site background.
+   A fixed layer taller than the viewport that JS/masonry.js slides up
+   slower than the page scrolls (parallax), so the glow drifts with the
+   content and feels like it sits deeper. Orbs are spread down the layer's
+   full height. Tweak the percentages (rgba alpha in the fallback) to make
+   them more / less visible; parallax speed is BG_DEPTH in JS/masonry.js. */
+.bg-orbs {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: calc(100vh + var(--bg-travel, 0px));
   z-index: -1;
   pointer-events: none;
+  will-change: transform;
+  /* fallback for browsers without color-mix() */
   background:
-    radial-gradient(42vw 42vw at 14% 16%, color-mix(in srgb, var(--teal) 7%, transparent), transparent 60%),
-    radial-gradient(38vw 38vw at 86% 20%, color-mix(in srgb, var(--blue) 6%, transparent), transparent 60%),
-    radial-gradient(46vw 46vw at 80% 84%, color-mix(in srgb, var(--lime) 5%, transparent), transparent 62%),
-    radial-gradient(40vw 40vw at 18% 88%, color-mix(in srgb, var(--orange) 4.5%, transparent), transparent 60%);
+    radial-gradient(48vw 48vw at 14% 6%, rgba(0, 190, 205, 0.2), transparent 62%),
+    radial-gradient(42vw 42vw at 88% 14%, rgba(0, 147, 186, 0.18), transparent 62%),
+    radial-gradient(46vw 46vw at 12% 44%, rgba(0, 147, 186, 0.16), transparent 62%),
+    radial-gradient(46vw 46vw at 86% 58%, rgba(0, 190, 205, 0.18), transparent 62%),
+    radial-gradient(48vw 48vw at 80% 86%, rgba(0, 147, 186, 0.18), transparent 62%);
+  background:
+    radial-gradient(48vw 48vw at 14% 6%, color-mix(in srgb, var(--teal) 20%, transparent), transparent 62%),
+    radial-gradient(42vw 42vw at 88% 14%, color-mix(in srgb, var(--blue) 18%, transparent), transparent 62%),
+    radial-gradient(46vw 46vw at 12% 44%, color-mix(in srgb, var(--blue) 16%, transparent), transparent 62%),
+    radial-gradient(46vw 46vw at 86% 58%, color-mix(in srgb, var(--teal) 18%, transparent), transparent 62%),
+    radial-gradient(48vw 48vw at 80% 86%, color-mix(in srgb, var(--blue) 18%, transparent), transparent 62%);
 }
 
 /* ============================================================
@@ -542,14 +556,16 @@ body::before {
 
 .footer-link:hover {
   transform: translateY(-2px);
-  border-color: color-mix(in srgb, var(--teal) 55%, transparent);
+  border-color: var(--accent); /* fallback */
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
   color: #fff;
-  box-shadow: 0 0 28px color-mix(in srgb, var(--teal) 18%, transparent);
+  box-shadow: 0 0 28px color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
 .footer-link:focus-visible {
   outline: none;
-  border-color: color-mix(in srgb, var(--teal) 70%, transparent);
+  border-color: var(--accent); /* fallback */
+  border-color: color-mix(in srgb, var(--accent) 70%, transparent);
 }
 
 .footer-icon {
@@ -557,7 +573,7 @@ body::before {
   width: 18px;
   height: 18px;
   opacity: 0.9;
-  transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
+  transition: transform 0.3s var(--ease), opacity 0.3s var(--ease), color 0.3s var(--ease);
 }
 
 .footer-icon svg { width: 100%; height: 100%; }
@@ -565,6 +581,7 @@ body::before {
 .footer-link:hover .footer-icon {
   transform: translateY(-1px);
   opacity: 1;
+  color: var(--accent);
 }
 
 /* ============================================================

@@ -40,6 +40,47 @@ window.addEventListener("resize", () => {
 });
 
 // ============================================================
+//  Background orbs parallax — the .bg-orbs layer is taller than the
+//  viewport and slides up at BG_DEPTH × the page's scroll speed
+// ============================================================
+const BG_DEPTH = 0.45; // 0 = pinned in place, 1 = scrolls with the content
+const bgOrbs = document.querySelector(".bg-orbs");
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+let bgTicking = false;
+
+function maxScroll() {
+  return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+}
+
+function moveOrbs() {
+  bgTicking = false;
+  const depth = reduceMotion.matches ? 0 : BG_DEPTH;
+  bgOrbs.style.transform = `translate3d(0, ${-window.scrollY * depth}px, 0)`;
+}
+
+function sizeOrbs() {
+  const depth = reduceMotion.matches ? 0 : BG_DEPTH;
+  bgOrbs.style.setProperty("--bg-travel", maxScroll() * depth + "px");
+  moveOrbs();
+}
+
+if (bgOrbs) {
+  sizeOrbs();
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (bgTicking) return;
+      bgTicking = true;
+      requestAnimationFrame(moveOrbs);
+    },
+    { passive: true }
+  );
+  window.addEventListener("resize", sizeOrbs);
+  new ResizeObserver(sizeOrbs).observe(document.body); // page height changes after masonry / fonts
+  reduceMotion.addEventListener("change", sizeOrbs);
+}
+
+// ============================================================
 //  Scroll-reveal for cards & heading
 // ============================================================
 const io = new IntersectionObserver(

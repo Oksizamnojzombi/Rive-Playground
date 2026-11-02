@@ -37,7 +37,7 @@ course by Maksym Marakhovskyi / Motion Design School.
 `index.html` — dark-theme portfolio page:
 
 - **Hero** — full-width interactive radial menu (bonus lesson, 2000×1000)
-- **Real Work** — a section for production pieces outside the course
+- **Commercial Shots** (`#real-work`) — a section for production pieces outside the course
   (currently: the `AVQ_logo/avq_interactivelogo.riv` dotted-logo animation).
   The surrounding copy/colors are a pixel-accurate mockup of an Avanquest
   Figma design ("PDF SDK, API & Web SDK.") used to preview the logo in context
